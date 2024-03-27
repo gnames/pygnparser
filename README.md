@@ -51,37 +51,37 @@ True
 
 Get [parsed quality](https://github.com/gnames/gnparser#figuring-out-if-names-are-well-formed):
 ```python
->>> result.get_quality() #  => Integer
+>>> result.quality() #  => Integer
 1
 ```
 
 Get the genus name:
 ```python
->>> result.get_genus() #  => String
+>>> result.genus() #  => String
 'Ursus'
 ```
 
 Get the species name:
 ```python
->>> result.get_species() #  => String
+>>> result.species() #  => String
 'arctos'
 ```
 
 Get the year:
 ```python
->>> result.get_year() #  => String
+>>> result.year() #  => String
 '1758'
 ```
 
 Get the authorship:
 ```python
->>> result.get_authorship() #  => String
+>>> result.authorship() #  => String
 '(Linnaeus, 1758)'
 ```
 
 Get the scientific name without the Latin gender stem:
 ```python
->>> result.get_canonical_stemmed() #  => String
+>>> result.canonical_stemmed() #  => String
 'Ursus arct'
 ```
 
@@ -94,7 +94,7 @@ results = gnparser('Ursus arctos Linnaeus, 1758\r\nAlces alces (Linnaeus, 1758)\
 
 Get the genus of the 1st parsed name in the list:
 ```python
-results[0].get_genus() #  => String
+results[0].genus() #  => String
 'Ursus'
 ```
 
@@ -103,24 +103,24 @@ results[0].get_genus() #  => String
 
 Some extra helpers are included that extend the functionality of GNparser.
 
-1) The get_page() method gets the page number out of the unparsed tail:
+1) The page() method gets the page number out of the unparsed tail:
 ```python
 >>> result = gnparser('Ursus arctos Linnaeus, 1758: 81')
-result.get_page()  # => String
+result.page()  # => String
 '81'
 ```
 
-2) The get_authorship() method returns a formatted authorship string depending on the number of authors. If it is one author with a year, it will return as Smith, 1970. For two authors and a year it will return as Smith & Johnson, 1970. For three authors it will return as Smith, Johnson & Jones, 1970. Any additional authors beyond 3 will be comma separated with the last author included with an ampersand.
+2) The authorship() method returns a formatted authorship string depending on the number of authors. If it is one author with a year, it will return as Smith, 1970. For two authors and a year it will return as Smith & Johnson, 1970. For three authors it will return as Smith, Johnson & Jones, 1970. Any additional authors beyond 3 will be comma separated with the last author included with an ampersand.
 ```python
 >>> result = gnparser('Aus bus cus Smith, Johnson, & Jones, 1970')
-result.get_authorship()  # => String
+result.authorship()  # => String
 'Smith, Johnson & Jones, 1970'
 ```
 
-3) The get_infraspecies() method will return the infraspecies name. Currently there is no special methods for ranks lower than trinomials but you can access them with the get_infraspecies_details() method. Please [open an issue](https://github.com/gnames/pygnparser/issues/new) if you need it added.
+3) The infraspecies() method will return the infraspecies name. Currently there is no special methods for ranks lower than trinomials but you can access them with the infraspecies_details() method. Please [open an issue](https://github.com/gnames/pygnparser/issues/new) if you need it added.
 ```python
 >>> result = gnparser('Aus bus cus')
-result.get_infraspecies()  # => String
+result.infraspecies()  # => String
 'cus'
 ```
 
