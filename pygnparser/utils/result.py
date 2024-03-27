@@ -5,7 +5,7 @@ class Result(dict):
         self.update(parsed_result)
 
 
-    def get_key(self, key, dict=None):
+    def _key(self, key, dict=None):
         if dict is None:
             dict = self.parsed_result
         try:
@@ -16,43 +16,43 @@ class Result(dict):
 
     
     def parsed(self):
-        return self.get_key('parsed')
+        return self._key('parsed')
 
 
-    def get_canonical(self):
-        return self.get_key('canonical')
-
-    
-    def get_canonical_stemmed(self):
-        return self.get_key('stemmed', dict=self.get_canonical())
+    def canonical(self):
+        return self._key('canonical')
 
     
-    def get_canonical_simple(self):
-        return self.get_key('simple', dict=self.get_canonical())
+    def canonical_stemmed(self):
+        return self._key('stemmed', dict=self.canonical())
 
     
-    def get_canonical_full(self):
-        return self.get_key('full', dict=self.get_canonical())
-
-
-    def get_authorship_details(self):
-        return self.get_key('authorship')
+    def canonical_simple(self):
+        return self._key('simple', dict=self.canonical())
 
     
-    def get_authorship_verbatim(self):
-        return self.get_key('verbatim', dict=self.get_authorship_details())
+    def canonical_full(self):
+        return self._key('full', dict=self.canonical())
+
+
+    def authorship_details(self):
+        return self._key('authorship')
 
     
-    def get_authorship_normalized(self):
-        return self.get_key('normalized', dict=self.get_authorship_details())
+    def authorship_verbatim(self):
+        return self._key('verbatim', dict=self.authorship_details())
 
     
-    def get_authorship_year(self):
-        return self.get_key('year', dict=self.get_authorship_details())
+    def authorship_normalized(self):
+        return self._key('normalized', dict=self.authorship_details())
 
     
-    def get_page(self):
-        verbatim_authorship = self.get_authorship_verbatim()
+    def authorship_year(self):
+        return self._key('year', dict=self.authorship_details())
+
+    
+    def page(self):
+        verbatim_authorship = self.authorship_verbatim()
         if ':' in verbatim_authorship:
             page = verbatim_authorship.split(':')[-1].strip()
         else:
@@ -72,7 +72,7 @@ class Result(dict):
             case _:
                 authorship = ', '.join(authorship_list[:-1]) + f' & {authorship_list[-1]}'
         if 'year' in authorship_details:
-            year = self.get_key('year', dict=authorship_details['year'])
+            year = self._key('year', dict=authorship_details['year'])
             authorship += f', {year}'
         if 'exAuthors' in authorship_details:
             ex_authorship = self._format_authorship(authorship_details['exAuthors'])
@@ -80,8 +80,8 @@ class Result(dict):
         return authorship
 
     
-    def get_authorship(self):
-        authorship_details = self.get_authorship_details()
+    def authorship(self):
+        authorship_details = self.authorship_details()
         authorship = None
         if authorship_details is not None:
             if 'originalAuth' in authorship_details:
@@ -91,92 +91,92 @@ class Result(dict):
                 authorship = f'({authorship}) {combination_authorship}'
 
             # handles zoological authorship
-            if 'combinationAuth' not in authorship_details and '(' in self.get_authorship_verbatim():
+            if 'combinationAuth' not in authorship_details and '(' in self.authorship_verbatim():
                 authorship = f'({authorship})'
         return authorship
 
 
-    def get_year(self):
-        return self.get_authorship_year()
+    def year(self):
+        return self.authorship_year()
 
 
-    def get_details(self):
-        return self.get_key('details')
+    def details(self):
+        return self._key('details')
 
 
-    def _get_details_rank(self):
-        return list(self.get_details().keys())[0]
+    def _details_rank(self):
+        return list(self.details().keys())[0]
 
 
-    def get_words(self):
-        return self.get_key('words')
+    def words(self):
+        return self._key('words')
 
 
-    def get_parser_version(self):
-        return self.get_key('parserVersion')
+    def parser_version(self):
+        return self._key('parserVersion')
 
 
-    def get_id(self):
-        return self.get_key('id')
+    def id(self):
+        return self._key('id')
 
 
-    def get_verbatim(self):
-        return self.get_key('verbatim')
+    def verbatim(self):
+        return self._key('verbatim')
 
 
-    def get_normalized(self):
-        return self.get_key('normalized')
+    def normalized(self):
+        return self._key('normalized')
 
 
-    def get_quality(self):
-        return self.get_key('quality')
+    def quality(self):
+        return self._key('quality')
 
 
-    def get_cardinality(self):
-        return self.get_key('cardinality')
+    def cardinality(self):
+        return self._key('cardinality')
 
 
-    def get_tail(self):
-        return self.get_key('tail')
+    def tail(self):
+        return self._key('tail')
 
 
-    def get_quality_warnings(self):
-        return self.get_key('qualityWarnings')
+    def quality_warnings(self):
+        return self._key('qualityWarnings')
 
 
-    def get_species(self):
-        return self.get_key('species')
+    def species(self):
+        return self._key('species')
 
 
-    def get_genus(self):
-        return self.get_key('genus', dict=self.get_details()[self._get_details_rank()])
+    def genus(self):
+        return self._key('genus', dict=self.details()[self._details_rank()])
 
 
-    def get_subgenus(self):
-        return self.get_key('subgenus', dict=self.get_details()[self._get_details_rank()])
+    def subgenus(self):
+        return self._key('subgenus', dict=self.details()[self._details_rank()])
 
 
-    def get_species(self):
-        return self.get_key('species', dict=self.get_details()[self._get_details_rank()])
+    def species(self):
+        return self._key('species', dict=self.details()[self._details_rank()])
 
 
-    def get_infraspecies_details(self):
-        return self.get_key('infraspecies', dict=self.get_details()[self._get_details_rank()])
+    def infraspecies_details(self):
+        return self._key('infraspecies', dict=self.details()[self._details_rank()])
 
 
-    def get_infraspecies(self):
-        infraspecies_details = self.get_infraspecies_details()
+    def infraspecies(self):
+        infraspecies_details = self.infraspecies_details()
         if infraspecies_details is not None:
-            return self.get_key('value', dict=infraspecies_details[0])
+            return self._key('value', dict=infraspecies_details[0])
         else:
             return None
 
 
-    def get_infraspecies_rank(self):
-        if self._get_details_rank() == 'infraspecies':
+    def infraspecies_rank(self):
+        if self._details_rank() == 'infraspecies':
             rank = None
-            if self.get_key('rank', dict=self.get_details()[self._get_details_rank()]['infraspecies'][0]) is not None:
-                rank = self.get_key('rank', dict=self.get_details()[self._get_details_rank()]['infraspecies'][0])
+            if self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0]) is not None:
+                rank = self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0])
         return rank
 
 
