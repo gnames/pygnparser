@@ -1,0 +1,6 @@
+requests>2.7
+sphinx_issues
+pytest
+pytest-cov
+codecov
+sphinx_rtd_theme
