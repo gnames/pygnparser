@@ -4,3 +4,4 @@ pytest
 pytest-cov
 codecov
 sphinx_rtd_theme
+vcrpy
