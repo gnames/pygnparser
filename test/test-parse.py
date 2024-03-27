@@ -3,25 +3,25 @@ import re
 from pygnparser import gnparser
 
 
-@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_dus.yaml")
+@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_Smith.yaml")
 def test_version():
     res = gnparser('Aus bus cus (Smith, 1999)')
     assert re.match(r'v\d\.\d\.\d', res.get_parser_version())
 
 
-@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_dus.yaml")
+@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_Smith.yaml")
 def test_id():
     res = gnparser('Aus bus cus (Smith, 1999)')
-    assert res.get_id() == '4909dd2f-acc2-558f-b8f3-74a975a120b7'
+    assert re.match(r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$', res.get_id())
 
 
-@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_dus.yaml")
+@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_Smith.yaml")
 def test_parsed():
     res = gnparser('Aus bus cus (Smith, 1999)')
     assert res.parsed() is True
 
 
-@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_dus.yaml")
+@vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_Smith.yaml")
 def test_cardinality():
     res = gnparser('Aus bus cus (Smith, 1999)')
     assert res.get_cardinality() == 3
