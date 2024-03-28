@@ -298,3 +298,14 @@ def test_parse_Calyptoprymnus_verecundus():
     assert res.page() == '46'
     assert res.tail().strip() == '(Fide Moody, 1977)'
 
+
+@vcr.use_cassette("test/vcr_cassettes/test_parse_Ablepharus_chernovi_ressli.yaml")
+def test_parse_Ablepharus_chernovi_ressli():
+    res = gnparser('Ablepharus chernovi ressli SCHMIDTLER 1997\u001d')
+    assert res.quality() == 4
+    assert res.genus() == 'Ablepharus'
+    assert res.species() == 'chernovi'
+    assert res.infraspecies() == 'ressli'
+    assert res.authorship_verbatim() == ''  # GNParser's behavior is for the authorship to not parse because of the \u001d character
+    assert res.authorship() == ''
+    assert res.page() == ''

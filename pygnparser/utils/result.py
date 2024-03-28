@@ -12,6 +12,8 @@ class Result(dict):
             value = dict[key]
         except KeyError:
             value = ''
+        except TypeError:
+            value = ''
         return value
 
     
@@ -83,7 +85,7 @@ class Result(dict):
     def authorship(self):
         authorship_details = self.authorship_details()
         authorship = ''
-        if authorship_details is not None:
+        if authorship_details != '':
             if 'originalAuth' in authorship_details:
                 authorship = self._format_authorship(authorship_details['originalAuth'])
             if 'combinationAuth' in authorship_details:
@@ -175,7 +177,7 @@ class Result(dict):
     def infraspecies_rank(self):
         if self._details_rank() == 'infraspecies':
             rank = ''
-            if self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0]) is not None:
+            if self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0]) != '':
                 rank = self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0])
         return rank
 
