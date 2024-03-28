@@ -1,5 +1,6 @@
 # pyGNparser
 
+![https://img.shields.io/pypi/v/pygnparser.svg](https://pypi.python.org/pypi/pygnparser) ![https://github.com/gnames/pygnparser/workflows/Python/badge.svg](https://github.com/gnames/pygnparser/actions?query=workflow%3APython)
 
 This is a Python wrapper on the [GNparser](https://parser.globalnames.org/) API. Code follow the spirit/approach of the [pygbif](https://github.com/gbif/pygbif/graphs/contributors) package, and indeed much of the wrapping utility is copied 1:1 from that repo, thanks [@sckott](https://github.com/sckott) and other [contributors](https://github.com/gbif/pygbif/graphs/contributors).
 
@@ -27,13 +28,13 @@ Import the library:
 from pygnparser import gnparser
 ```
 
-If you have a local installation of gnparser, set the GNP_BASE_URL to the host and port that the service is running on, for example if running locally on port 8787:
+If you have a local installation of gnparser, set the GNPARSER_BASE_URL to the host and port that the service is running on, for example if running locally on port 8787:
 
 ```python
-GNP_BASE_URL = "http://localhost:8787/"
+GNPARSER_BASE_URL = "http://localhost:8787/"
 ```
 
-Without the GNP_BASE_URL environment variable set, the wrapper will default to using the remote API which will perform slower: https://parser.globalnames.org/
+Without the GNPARSER_BASE_URL environment variable set, the wrapper will default to using the remote API which will perform slower: https://parser.globalnames.org/
 
 
 ---
@@ -127,6 +128,8 @@ result.infraspecies()  # => String
 ---
 ## Other GNparser Libraries
 
+* Node.js: [node-gnparser](https://github.com/amazingplants/node-gnparser)
+* R: [rgnparser](https://github.com/ropensci/rgnparser)
 * Ruby Gem: [biodiversity](https://github.com/GlobalNamesArchitecture/biodiversity)
 
 ---
