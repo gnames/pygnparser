@@ -120,7 +120,7 @@ def test_parse_infraspecies():
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_dus.yaml")
 def test_parse_infraspecies_rank():
     res = gnparser('Aus (Bus) cus dus (Smith, 1980)')
-    assert res.infraspecies_rank() is None
+    assert res.infraspecies_rank() == ''
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_var_dus.yaml")
@@ -259,7 +259,7 @@ def test_parse_Ablepharus_pannonicus():
     res = gnparser('Ablepharus pannonicus Fitzinger in Eversmann, 1823: 145 (Nom. Nud., In Error)')
     assert res.genus() == 'Ablepharus'
     assert res.species() == 'pannonicus'
-    assert res.infraspecies() is None
+    assert res.infraspecies() == ''
     assert res.authorship() == 'Fitzinger in Eversmann, 1823'
     assert res.page() == '145'
     assert res.quality_warnings() == [{'quality': 4, 'warning': 'Unparsed tail'}, {'quality': 2, 'warning': 'Ex authors are not required (ICZN only)'}, {'quality': 2, 'warning': 'Year with page info'}]
@@ -271,9 +271,9 @@ def test_parse_Aspidoscelis_neavesi():
     res = gnparser('Aspidoscelis neavesi Cole, Taylor, Baumann & Baumann, 2014 (Part)')
     assert res.genus() == 'Aspidoscelis'
     assert res.species() == 'neavesi'
-    assert res.infraspecies() is None
+    assert res.infraspecies() == ''
     assert res.authorship() == 'Cole, Taylor, Baumann & Baumann, 2014'
-    assert res.page() is None
+    assert res.page() == ''
     assert res.tail().strip() == '(Part)'
 
 
@@ -282,7 +282,7 @@ def test_parse_Atuechosaurus_travancoricus():
     res = gnparser('Atuechosaurus travancoricus Beddome, 1870: 33 (Part.)')
     assert res.genus() == 'Atuechosaurus'
     assert res.species() == 'travancoricus'
-    assert res.infraspecies() is None
+    assert res.infraspecies() == ''
     assert res.authorship() == 'Beddome, 1870'
     assert res.page() == '33'
     assert res.tail().strip() == '(Part.)'
@@ -293,7 +293,7 @@ def test_parse_Calyptoprymnus_verecundus():
     res = gnparser('Calyptoprymnus verecundus De Vis, 1905: 46 (Fide Moody, 1977)')
     assert res.genus() == 'Calyptoprymnus'
     assert res.species() == 'verecundus'
-    assert res.infraspecies() is None
+    assert res.infraspecies() == ''
     assert res.authorship() == 'De Vis, 1905'
     assert res.page() == '46'
     assert res.tail().strip() == '(Fide Moody, 1977)'

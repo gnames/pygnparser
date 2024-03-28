@@ -9,10 +9,10 @@ class Result(dict):
         if dict is None:
             dict = self.parsed_result
         try:
-            key = dict[key]
+            value = dict[key]
         except KeyError:
-            key = None
-        return key
+            value = ''
+        return value
 
     
     def parsed(self):
@@ -56,7 +56,7 @@ class Result(dict):
         if ':' in verbatim_authorship:
             page = verbatim_authorship.split(':')[-1].strip()
         else:
-            page = None
+            page = ''
         return page
 
     
@@ -82,7 +82,7 @@ class Result(dict):
     
     def authorship(self):
         authorship_details = self.authorship_details()
-        authorship = None
+        authorship = ''
         if authorship_details is not None:
             if 'originalAuth' in authorship_details:
                 authorship = self._format_authorship(authorship_details['originalAuth'])
@@ -166,15 +166,15 @@ class Result(dict):
 
     def infraspecies(self):
         infraspecies_details = self.infraspecies_details()
-        if infraspecies_details is not None:
+        if infraspecies_details != '':
             return self._key('value', dict=infraspecies_details[0])
         else:
-            return None
+            return ''
 
 
     def infraspecies_rank(self):
         if self._details_rank() == 'infraspecies':
-            rank = None
+            rank = ''
             if self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0]) is not None:
                 rank = self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0])
         return rank
