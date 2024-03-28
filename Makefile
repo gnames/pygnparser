@@ -1,12 +1,12 @@
 all: build install
 
-.PHONY: build install test distclean dist upload
+.PHONY: build install test distclean dist up
 
 build:
 	python setup.py build
 
 install: build
-	python setup.py install
+	pip install .
 
 test:
 	pytest --cov-report term --cov=pygnparser test/
@@ -19,9 +19,6 @@ distclean:
 
 dist:
 	python setup.py sdist bdist_wheel --universal
-
-register:
-	python setup.py register
 
 up:
 	python -m twine upload dist/*
