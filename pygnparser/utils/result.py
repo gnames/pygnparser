@@ -178,8 +178,8 @@ class Result(dict):
 
 
     def infraspecies_rank(self):
+        rank = ''
         if self._details_rank() == 'infraspecies':
-            rank = ''
             if self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0]) != '':
                 rank = self._key('rank', dict=self.details()[self._details_rank()]['infraspecies'][0])
         return rank

@@ -321,3 +321,10 @@ def test_parse_et_al_default():
 def test_parse_et_al_default():
     res = gnparser('Aus bus cus (Smith, Anderson, Jones, O\'Brian & Peters in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith, & Jones, 2000')
     assert res.authorship(et_al_cutoff=5) == '(Smith et al. in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith & Jones, 2000'
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_infraspecies_rank_on_species.yaml")
+def test_infraspecies_rank_on_species():
+    res = gnparser('Aus bus (Smith, 1999)')
+    assert res.infraspecies_rank() == ''
+    assert res.infraspecies() == ''
