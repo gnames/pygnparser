@@ -62,7 +62,7 @@ class Result(dict):
         return page
 
     
-    def _format_authorship(self, authorship_details):
+    def _format_authorship(self, authorship_details, et_al_cutoff=4):
         authorship_list = authorship_details['authors']
         match len(authorship_list):
             case 0:
@@ -72,24 +72,27 @@ class Result(dict):
             case 2:
                 authorship = f'{authorship_list[0]} & {authorship_list[1]}'
             case _:
-                authorship = ', '.join(authorship_list[:-1]) + f' & {authorship_list[-1]}'
+                if len(authorship_list) >= et_al_cutoff:
+                    authorship = ', '.join(authorship_list[:1]) + ' et al.'
+                else:
+                    authorship = ', '.join(authorship_list[:-1]) + f' & {authorship_list[-1]}'
         if 'year' in authorship_details:
             year = self._key('year', dict=authorship_details['year'])
             authorship += f', {year}'
         if 'exAuthors' in authorship_details:
-            ex_authorship = self._format_authorship(authorship_details['exAuthors'])
+            ex_authorship = self._format_authorship(authorship_details['exAuthors'], et_al_cutoff)
             authorship += f' in {ex_authorship}'
         return authorship
 
     
-    def authorship(self):
+    def authorship(self, et_al_cutoff=4):
         authorship_details = self.authorship_details()
         authorship = ''
         if authorship_details != '':
             if 'originalAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['originalAuth'])
+                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff)
             if 'combinationAuth' in authorship_details:
-                combination_authorship = self._format_authorship(authorship_details['combinationAuth'])
+                combination_authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff)
                 authorship = f'({authorship}) {combination_authorship}'
 
             # handles zoological authorship

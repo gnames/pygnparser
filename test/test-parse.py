@@ -203,7 +203,7 @@ def test_parse_Naja_porphyrica_authorship():
 @vcr.use_cassette("test/vcr_cassettes/test_parse_4_authors.yaml")
 def test_parse_4_authors():
     res = gnparser('Aus bus cus (Smith, Anderson, Jones, & Ryan, 1999)')
-    assert res.authorship() == '(Smith, Anderson, Jones & Ryan, 1999)'
+    assert res.authorship(et_al_cutoff=5) == '(Smith, Anderson, Jones & Ryan, 1999)'
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_3_authors.yaml")
@@ -242,14 +242,14 @@ def test_parse_1_author_no_brackets():
     assert res.authorship() == 'Smith, 1999'
 
 
-@vcr.use_cassette("test/vcr_cassettes/test_parse_ex_original.yaml")
-def test_parse_ex_original():
+@vcr.use_cassette("test/vcr_cassettes/test_parse_in_original.yaml")
+def test_parse_in_original():
     res = gnparser('Aus bus cus Smith in Richards, 1999')
     assert res.authorship() == 'Smith in Richards, 1999'
 
 
-@vcr.use_cassette("test/vcr_cassettes/test_parse_ex_original_comb.yaml")
-def test_parse_ex_original_comb():
+@vcr.use_cassette("test/vcr_cassettes/test_parse_in_original_comb.yaml")
+def test_parse_in_original_comb():
     res = gnparser('Aus bus cus (Smith in Richards, 1999) Ryan in Anderson, Smith, & Jones, 2000')
     assert res.authorship() == '(Smith in Richards, 1999) Ryan in Anderson, Smith & Jones, 2000'
 
@@ -272,7 +272,7 @@ def test_parse_Aspidoscelis_neavesi():
     assert res.genus() == 'Aspidoscelis'
     assert res.species() == 'neavesi'
     assert res.infraspecies() == ''
-    assert res.authorship() == 'Cole, Taylor, Baumann & Baumann, 2014'
+    assert res.authorship() == 'Cole et al., 2014'
     assert res.page() == ''
     assert res.tail().strip() == '(Part)'
 
@@ -309,3 +309,15 @@ def test_parse_Ablepharus_chernovi_ressli():
     assert res.authorship_verbatim() == ''  # GNParser's behavior is for the authorship to not parse because of the \u001d character
     assert res.authorship() == ''
     assert res.page() == ''
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_parse_et_al_default.yaml")
+def test_parse_et_al_default():
+    res = gnparser('Aus bus cus (Smith, Anderson, Jones, & Peters in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith, & Jones, 2000')
+    assert res.authorship() == '(Smith et al. in Richards et al., 1999) Ryan in Anderson, Smith & Jones, 2000'
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_parse_et_al_5.yaml")
+def test_parse_et_al_default():
+    res = gnparser('Aus bus cus (Smith, Anderson, Jones, O\'Brian & Peters in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith, & Jones, 2000')
+    assert res.authorship(et_al_cutoff=5) == '(Smith et al. in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith & Jones, 2000'
