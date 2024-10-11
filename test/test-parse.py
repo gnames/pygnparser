@@ -1,12 +1,14 @@
 import vcr
 import re
+import pytest
 from pygnparser import gnparser
+import warnings
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_Smith.yaml")
 def test_version():
     res = gnparser('Aus bus cus (Smith, 1999)')
-    assert re.match(r'v\d\.\d\.\d', res.parser_version())
+    assert re.match(r'v\d+\.\d+\.\d+', res.parser_version())
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Aus_cus_Smith.yaml")
@@ -216,12 +218,16 @@ def test_parse_3_authors():
 def test_parse_3_authors_no_brackets():
     res = gnparser('Aus bus cus Smith, Anderson & Ryan, 1999')
     assert res.authorship() == 'Smith, Anderson & Ryan, 1999'
+    assert res.original_authorship() == 'Smith, Anderson & Ryan, 1999'
+    assert res.combination_authorship() == ''
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_2_authors.yaml")
 def test_parse_2_authors():
     res = gnparser('Aus bus cus (Smith & Anderson, 1999)')
     assert res.authorship() == '(Smith & Anderson, 1999)'
+    assert res.original_authorship() == 'Smith & Anderson, 1999'
+    assert res.combination_authorship() == ''
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_2_authors_no_brackets.yaml")
@@ -261,9 +267,12 @@ def test_parse_Ablepharus_pannonicus():
     assert res.species() == 'pannonicus'
     assert res.infraspecies() == ''
     assert res.authorship() == 'Fitzinger in Eversmann, 1823'
+    assert res.original_authorship() == 'Fitzinger in Eversmann, 1823'
+    assert res.combination_authorship() == ''
     assert res.page() == '145'
     assert res.quality_warnings() == [{'quality': 4, 'warning': 'Unparsed tail'}, {'quality': 2, 'warning': 'Ex authors are not required (ICZN only)'}, {'quality': 2, 'warning': 'Year with page info'}]
     assert res.tail().strip() == '(Nom. Nud., In Error)'
+    assert res.is_hybrid() == False
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Aspidoscelis_neavesi.yaml")
@@ -273,8 +282,11 @@ def test_parse_Aspidoscelis_neavesi():
     assert res.species() == 'neavesi'
     assert res.infraspecies() == ''
     assert res.authorship() == 'Cole et al., 2014'
+    assert res.original_authorship() == 'Cole et al., 2014'
+    assert res.combination_authorship() == ''
     assert res.page() == ''
     assert res.tail().strip() == '(Part)'
+    assert res.is_hybrid() == False
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Atuechosaurus_travancoricus.yaml")
@@ -284,8 +296,11 @@ def test_parse_Atuechosaurus_travancoricus():
     assert res.species() == 'travancoricus'
     assert res.infraspecies() == ''
     assert res.authorship() == 'Beddome, 1870'
+    assert res.original_authorship() == 'Beddome, 1870'
+    assert res.combination_authorship() == ''
     assert res.page() == '33'
     assert res.tail().strip() == '(Part.)'
+    assert res.is_hybrid() == False
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Calyptoprymnus_verecundus.yaml")
@@ -297,6 +312,7 @@ def test_parse_Calyptoprymnus_verecundus():
     assert res.authorship() == 'De Vis, 1905'
     assert res.page() == '46'
     assert res.tail().strip() == '(Fide Moody, 1977)'
+    assert res.is_hybrid() == False
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_Ablepharus_chernovi_ressli.yaml")
@@ -309,18 +325,23 @@ def test_parse_Ablepharus_chernovi_ressli():
     assert res.authorship_verbatim() == ''  # GNParser's behavior is for the authorship to not parse because of the \u001d character
     assert res.authorship() == ''
     assert res.page() == ''
+    assert res.is_hybrid() == False
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_et_al_default.yaml")
 def test_parse_et_al_default():
     res = gnparser('Aus bus cus (Smith, Anderson, Jones, & Peters in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith, & Jones, 2000')
     assert res.authorship() == '(Smith et al. in Richards et al., 1999) Ryan in Anderson, Smith & Jones, 2000'
+    assert res.original_authorship() == 'Smith, Anderson, Jones, & Peters in Richards, Shultz, Anderson & Smith, 1999'
+    assert res.combination_authorship() == 'Ryan in Anderson, Smith & Jones, 2000'
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_parse_et_al_5.yaml")
 def test_parse_et_al_default():
     res = gnparser('Aus bus cus (Smith, Anderson, Jones, O\'Brian & Peters in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith, & Jones, 2000')
     assert res.authorship(et_al_cutoff=5) == '(Smith et al. in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith & Jones, 2000'
+    assert res.original_authorship(et_al_cutoff=5) == 'Smith et al. in Richards, Shultz, Anderson & Smith, 1999'
+    assert res.combination_authorship(et_al_cutoff=5) == 'Ryan in Anderson, Smith & Jones, 2000'
 
 
 @vcr.use_cassette("test/vcr_cassettes/test_infraspecies_rank_on_species.yaml")
@@ -328,3 +349,73 @@ def test_infraspecies_rank_on_species():
     res = gnparser('Aus bus (Smith, 1999)')
     assert res.infraspecies_rank() == ''
     assert res.infraspecies() == ''
+    assert res.is_hybrid() == False
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_hybrid_formula.yaml")
+def test_hybrid_formula():
+    res = gnparser('Isoetes lacustris x stricta Gay')
+    assert res.is_hybrid() == True
+    assert res.hybrid() == 'HYBRID_FORMULA'
+    assert res.normalized() == 'Isoetes lacustris × Isoetes stricta Gay'
+    assert res.hybrid_formula_ranks() == ['species', 'species']
+    assert res.hybrid_formula_genera() == ['Isoetes', 'Isoetes']
+    assert res.hybrid_formula_species() == ['lacustris', 'stricta']
+    assert res.hybrid_formula_infraspecies() == ['', '']
+    assert res.hybrid_formula_authorship() == ['', 'Gay']
+    with pytest.warns(UserWarning, match='Warning\: authorship\(\) returns empty for hybrid formulas. Use hybrid_formula_authorship\(\) instead.'):
+        assert res.authorship() == ''
+    #assert res.original_authorship() == ''
+    #assert res.combination_authorship() == ''
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_hybrid_formula2.yaml")
+def test_hybrid_formula_2():
+    res = gnparser('Phegopteris connectilis × Dryopteris filix-mas')
+    assert res.is_hybrid() == True
+    assert res.hybrid() == 'HYBRID_FORMULA'
+    assert res.normalized() == 'Phegopteris connectilis × Dryopteris filix-mas'
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_hybrid_formula3.yaml")
+def test_hybrid_formula_3():
+    res = gnparser('Aus bus Smith x Aus cus dus L.')
+    assert res.is_hybrid() == True
+    assert res.hybrid() == 'HYBRID_FORMULA'
+    assert res.normalized() == 'Aus bus Smith × Aus cus dus L.'
+    assert res.hybrid_formula_ranks() == ['species', 'infraspecies']
+    assert res.hybrid_formula_genera() == ['Aus', 'Aus']
+    assert res.hybrid_formula_species() == ['bus', 'cus']
+    assert res.hybrid_formula_infraspecies() == ['', 'dus']
+    assert res.hybrid_formula_authorship() == ['Smith', 'L.']
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_named_hybrid.yaml")
+def test_named_hybrid():
+    res = gnparser('× Triticosecale semisecale (Mackey) K.Hammer & Filat.')
+    assert res.is_hybrid() == True
+    assert res.hybrid() == 'NAMED_HYBRID'
+    assert res.normalized() == '× Triticosecale semisecale (Mackey) K. Hammer & Filat.'
+    assert res.canonical_full() == '× Triticosecale semisecale'
+    assert res.canonical_simple() == 'Triticosecale semisecale'
+    assert res.genus() == 'Triticosecale'
+    assert res.species() == 'semisecale'
+    assert res.authorship() == '(Mackey) K. Hammer & Filat.'
+    assert res.original_authorship() == 'Mackey'
+    assert res.combination_authorship() == 'K. Hammer & Filat.'
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_named_hybrid2.yaml")
+def test_named_hybrid2():
+    res = gnparser('Petunia × atkinsiana (Sweet) D. Don ex W. H. Baxter')
+    assert res.is_hybrid() == True
+    assert res.hybrid() == 'NAMED_HYBRID'
+    assert res.normalized() == 'Petunia × atkinsiana (Sweet) D. Don ex W. H. Baxter'
+    assert res.canonical_stemmed() == 'Petunia atkinsian'
+    assert res.canonical_full() == 'Petunia × atkinsiana'
+    assert res.canonical_simple() == 'Petunia atkinsiana'
+    assert res.genus() == 'Petunia'
+    assert res.species() == 'atkinsiana'
+    assert res.authorship() == '(Sweet) D. Don in W. H. Baxter'
+    assert res.original_authorship() == 'Sweet'
+    assert res.combination_authorship() == 'D. Don in W. H. Baxter'

@@ -12,7 +12,7 @@ long_description = readme + "\n\n" + changes
 
 setup(
     name="pyGNparser",
-    version="0.0.1",
+    version="0.0.2",
     description="Python client for GNparser",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -45,7 +45,8 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11"
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12"
     ],
     keywords = ['biodiversity', 'scientific names', 'parser', 'nomenclature', 'taxonomy', 'API', 'web-services', 'species', 'natural history', 'taxonomists', 'biologists', 'Global Names'],
 )

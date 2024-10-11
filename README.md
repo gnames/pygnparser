@@ -86,6 +86,25 @@ Get the scientific name without the Latin gender stem:
 'Ursus arct'
 ```
 
+Get the parsed name components for a hybrid formula:
+```python
+>>> result = gnparser('Isoetes lacustris × stricta Gay') #  => Dictionary
+>>> result.is_hybrid() #  => Boolean
+True
+>>> result.hybrid() #  => String
+'HYBRID_FORMULA'
+>>> result.normalized() #  => String
+'Isoetes lacustris × Isoetes stricta Gay'
+>>> result.hybrid_formula_ranks() #  => Array
+['species', 'species']
+>>> res.hybrid_formula_genera() #  => Array
+['Isoetes', 'Isoetes']
+>>> res.hybrid_formula_species() #  => Array
+['lacustris', 'stricta']
+>>> res.hybrid_formula_authorship() #  => Array
+['', 'Gay']
+```
+
 ---
 ### Parse multiple scientific names
 Parse multiple scientific names by separating them with `\r\n`:
