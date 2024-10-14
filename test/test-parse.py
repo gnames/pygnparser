@@ -419,3 +419,29 @@ def test_named_hybrid2():
     assert res.authorship() == '(Sweet) D. Don in W. H. Baxter'
     assert res.original_authorship() == 'Sweet'
     assert res.combination_authorship() == 'D. Don in W. H. Baxter'
+
+
+@vcr.use_cassette("test/vcr_cassettes/test_uninomial.yaml")
+def test_uninomial():
+    res = gnparser('Dennstaedtiaceae Lotsy')
+    assert res._details_rank() == 'uninomial'
+    assert res.uninomial() == 'Dennstaedtiaceae'
+    assert res.genus() == ''
+    assert res.species() == ''
+    assert res.infraspecies() == ''
+    assert res.authorship() == 'Lotsy'
+    assert res.is_hybrid() == False
+
+
+# despite Microlepia being a genus, GNParser will treat it as a uninomial
+#   unless it is combined with a specific epithet, so use res.uninomial() instead of res.genus()
+@vcr.use_cassette("test/vcr_cassettes/test_uninomial2.yaml")
+def test_uninomial():
+    res = gnparser('Microlepia C.Presl')
+    assert res._details_rank() == 'uninomial'
+    assert res.uninomial() == 'Microlepia'
+    assert res.genus() == ''
+    assert res.species() == ''
+    assert res.infraspecies() == ''
+    assert res.authorship() == 'C. Presl'
+    assert res.is_hybrid() == False

@@ -12,14 +12,14 @@ long_description = readme + "\n\n" + changes
 
 setup(
     name="pyGNparser",
-    version="0.0.2",
+    version="0.0.3",
     description="Python client for GNparser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Geoff Ower",
     author_email="gdower@illinois.edu",
     url="http://github.com/gnames/pyGNparser",
-    download_url="https://github.com/gnames/pyGNparser/archive/refs/tags/v0.0.1.tar.gz",
+    download_url="https://github.com/gnames/pyGNparser/archive/refs/tags/v0.0.3.tar.gz",
     license="MIT",
     packages=find_packages(exclude=["test-*"]),
     install_requires=[

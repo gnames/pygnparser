@@ -189,6 +189,10 @@ class Result(dict):
         return self._key('qualityWarnings')
 
 
+    def uninomial(self):
+        return self._key('uninomial', dict=self.details()[self._details_rank()])
+
+
     def genus(self):
         return self._key('genus', dict=self.details()[self._details_rank()])
 
