@@ -12,14 +12,14 @@ long_description = readme + "\n\n" + changes
 
 setup(
     name="pyGNparser",
-    version="0.0.3",
+    version="0.0.4",
     description="Python client for GNparser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Geoff Ower",
     author_email="gdower@illinois.edu",
     url="http://github.com/gnames/pyGNparser",
-    download_url="https://github.com/gnames/pyGNparser/archive/refs/tags/v0.0.3.tar.gz",
+    download_url="https://github.com/gnames/pyGNparser/archive/refs/tags/v0.0.4.tar.gz",
     license="MIT",
     packages=find_packages(exclude=["test-*"]),
     install_requires=[
@@ -46,7 +46,8 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12"
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
     keywords = ['biodiversity', 'scientific names', 'parser', 'nomenclature', 'taxonomy', 'API', 'web-services', 'species', 'natural history', 'taxonomists', 'biologists', 'Global Names'],
 )

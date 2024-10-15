@@ -55,8 +55,11 @@ class Result(dict):
         return self._key('verbatim', dict=self.authorship_details())
 
     
-    def authorship_normalized(self):
-        return self._key('normalized', dict=self.authorship_details())
+    def authorship_normalized(self, preserve_in_authorship=False):
+        authorship = self._key('normalized', dict=self.authorship_details())
+        if preserve_in_authorship and ' in ' in self.authorship_verbatim():
+            authorship = authorship.replace(' ex ', ' in ')
+        return authorship
 
     
     def authorship_year(self):
@@ -80,7 +83,7 @@ class Result(dict):
         return page
 
     
-    def _format_authorship(self, authorship_details, et_al_cutoff=4):
+    def _format_authorship(self, authorship_details, et_al_cutoff=4, preserve_in_authorship=False):
         authorship_list = authorship_details['authors']
         match len(authorship_list):
             case 0:
@@ -99,11 +102,14 @@ class Result(dict):
             authorship += f', {year}'
         if 'exAuthors' in authorship_details:
             ex_authorship = self._format_authorship(authorship_details['exAuthors'], et_al_cutoff)
-            authorship += f' in {ex_authorship}'
+            if preserve_in_authorship and ' in ' in self.authorship_verbatim():
+                authorship += f' in {ex_authorship}'
+            else:
+                authorship += f' ex {ex_authorship}'
         return authorship
 
 
-    def authorship(self, et_al_cutoff=4, authorship_details=None):
+    def authorship(self, et_al_cutoff=4, authorship_details=None, preserve_in_authorship=False):
         if authorship_details is None:
             if self.hybrid() == 'HYBRID_FORMULA':
                 warnings.warn('Warning: authorship() returns empty for hybrid formulas. Use hybrid_formula_authorship() instead.', UserWarning)
@@ -112,9 +118,9 @@ class Result(dict):
         authorship = ''
         if authorship_details != '':
             if 'originalAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff)
+                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff, preserve_in_authorship)
             if 'combinationAuth' in authorship_details:
-                combination_authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff)
+                combination_authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff, preserve_in_authorship)
                 authorship = f'({authorship}) {combination_authorship}'
 
             # handles zoological authorship
@@ -123,21 +129,21 @@ class Result(dict):
         return authorship
     
 
-    def original_authorship(self, et_al_cutoff=4):
+    def original_authorship(self, et_al_cutoff=4, preserve_in_authorship=False):
         authorship_details = self.authorship_details()
         authorship = ''
         if authorship_details != '':
             if 'originalAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff)
+                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff, preserve_in_authorship)
         return authorship
     
 
-    def combination_authorship(self, et_al_cutoff=4):
+    def combination_authorship(self, et_al_cutoff=4, preserve_in_authorship=False):
         authorship_details = self.authorship_details()
         authorship = ''
         if authorship_details != '':
             if 'combinationAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff)
+                authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff, preserve_in_authorship)
         return authorship
 
 
@@ -169,8 +175,11 @@ class Result(dict):
         return self._key('verbatim')
 
 
-    def normalized(self):
-        return self._key('normalized')
+    def normalized(self, preserve_in_authorship=False):
+        normalized = self._key('normalized')
+        if preserve_in_authorship and ' in ' in self.authorship_verbatim():
+            normalized = normalized.replace(' ex ', ' in ')
+        return normalized
 
 
     def quality(self):
