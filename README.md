@@ -1,6 +1,6 @@
 # pyGNparser
 
-![https://img.shields.io/pypi/v/pygnparser.svg](https://pypi.python.org/pypi/pygnparser) ![https://github.com/gnames/pygnparser/workflows/Python/badge.svg](https://github.com/gnames/pygnparser/actions?query=workflow%3APython)
+[![PyPI version](https://img.shields.io/pypi/v/pygnparser.svg)](https://pypi.python.org/pypi/pygnparser) [![Python workflow](https://github.com/gnames/pygnparser/workflows/Python/badge.svg)](https://github.com/gnames/pygnparser/actions?query=workflow%3APython)
 
 This is a Python wrapper on the [GNparser](https://parser.globalnames.org/) API. Code follow the spirit/approach of the [pygbif](https://github.com/gbif/pygbif/graphs/contributors) package, and indeed much of the wrapping utility is copied 1:1 from that repo, thanks [@sckott](https://github.com/sckott) and other [contributors](https://github.com/gbif/pygbif/graphs/contributors).
 
