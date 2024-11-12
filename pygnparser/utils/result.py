@@ -23,6 +23,10 @@ class Result(dict):
         return self._key('parsed')
 
 
+    def nomenclatural_code(self):
+        return self._key('nomenclaturalCode')
+
+
     def canonical(self):
         return self._key('canonical')
 
@@ -70,6 +74,10 @@ class Result(dict):
         return 'hybrid' in self
 
 
+    def is_cultivar(self):
+        return 'cultivar' in self
+
+
     def hybrid(self):
         return self._key('hybrid')
 
@@ -82,8 +90,8 @@ class Result(dict):
             page = ''
         return page
 
-    
-    def _format_authorship(self, authorship_details, et_al_cutoff=4, preserve_in_authorship=False):
+
+    def _format_authorship(self, authorship_details, et_al_cutoff=None):
         authorship_list = authorship_details['authors']
         match len(authorship_list):
             case 0:
@@ -93,23 +101,24 @@ class Result(dict):
             case 2:
                 authorship = f'{authorship_list[0]} & {authorship_list[1]}'
             case _:
-                if len(authorship_list) >= et_al_cutoff:
-                    authorship = ', '.join(authorship_list[:1]) + ' et al.'
-                else:
+                if et_al_cutoff is None or len(authorship_list) < et_al_cutoff:
                     authorship = ', '.join(authorship_list[:-1]) + f' & {authorship_list[-1]}'
+                else:
+                    authorship = ', '.join(authorship_list[:1]) + ' et al.'
+
         if 'year' in authorship_details:
             year = self._key('year', dict=authorship_details['year'])
             authorship += f', {year}'
         if 'exAuthors' in authorship_details:
             ex_authorship = self._format_authorship(authorship_details['exAuthors'], et_al_cutoff)
-            if preserve_in_authorship and ' in ' in self.authorship_verbatim():
-                authorship += f' in {ex_authorship}'
-            else:
-                authorship += f' ex {ex_authorship}'
+            authorship += f' ex {ex_authorship}'
+        if 'inAuthors' in authorship_details:
+            in_authorship = self._format_authorship(authorship_details['inAuthors'], et_al_cutoff)
+            authorship += f' in {in_authorship}'
         return authorship
 
 
-    def authorship(self, et_al_cutoff=4, authorship_details=None, preserve_in_authorship=False):
+    def authorship(self, et_al_cutoff=None, authorship_details=None):
         if authorship_details is None:
             if self.hybrid() == 'HYBRID_FORMULA':
                 warnings.warn('Warning: authorship() returns empty for hybrid formulas. Use hybrid_formula_authorship() instead.', UserWarning)
@@ -118,9 +127,9 @@ class Result(dict):
         authorship = ''
         if authorship_details != '':
             if 'originalAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff, preserve_in_authorship)
+                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff)
             if 'combinationAuth' in authorship_details:
-                combination_authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff, preserve_in_authorship)
+                combination_authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff)
                 authorship = f'({authorship}) {combination_authorship}'
 
             # handles zoological authorship
@@ -129,21 +138,21 @@ class Result(dict):
         return authorship
     
 
-    def original_authorship(self, et_al_cutoff=4, preserve_in_authorship=False):
+    def original_authorship(self, et_al_cutoff=None):
         authorship_details = self.authorship_details()
         authorship = ''
         if authorship_details != '':
             if 'originalAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff, preserve_in_authorship)
+                authorship = self._format_authorship(authorship_details['originalAuth'], et_al_cutoff)
         return authorship
     
 
-    def combination_authorship(self, et_al_cutoff=4, preserve_in_authorship=False):
+    def combination_authorship(self, et_al_cutoff=None):
         authorship_details = self.authorship_details()
         authorship = ''
         if authorship_details != '':
             if 'combinationAuth' in authorship_details:
-                authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff, preserve_in_authorship)
+                authorship = self._format_authorship(authorship_details['combinationAuth'], et_al_cutoff)
         return authorship
 
 
@@ -231,13 +240,17 @@ class Result(dict):
         return self._key('species', dict=self.details()[self._details_rank()])
 
 
+    def cultivar(self):
+        return self._key('cultivar', dict=self.details()[self._details_rank()])
+
+
     def hybrid_formula_species(self):
         ranks = self.hybrid_formula_ranks()
         return [self.details()['hybridFormula'][0][ranks[0]]['species'],
                 self.details()['hybridFormula'][1][ranks[1]]['species']]
 
 
-    def hybrid_formula_authorship(self, et_al_cutoff=4):
+    def hybrid_formula_authorship(self, et_al_cutoff=None):
         ranks = self.hybrid_formula_ranks()
         authorship = ['', '']
         for i in range(2):

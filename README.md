@@ -105,6 +105,21 @@ True
 ['', 'Gay']
 ```
 
+Parse a scientific name under a specified nomenclatural code:
+```python
+>>> result = gnparser('Malus domestica \'Fuji\'', code='cultivar')
+>>> result.is_cultivar() #  => Boolean
+True
+>>> result.genus() #  => String
+'Malus'
+>>> result.species() #  => String
+'domestica'
+>>> result.cultivar() #  => String
+'‘Fuji’'
+>>> result.nomenclatural_code() #  => String
+'ICNCP'
+```
+
 ---
 ### Parse multiple scientific names
 Parse multiple scientific names by separating them with `\r\n`:

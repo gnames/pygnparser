@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.0.5] - 2024-11-11
+- Added nomenclatural code parameter
+- Added result methods for cultivars
+- Disabled et_al_cutoff formatting by default
+- Removed preserve_in_authorship parameter from authorship() because GNparser no longer normalizes `in` to `ex`
+
 ## [0.0.4] - 2024-10-15
 
 - Added preserve_in_authorship parameter to authorship() to optionally override normalization of `in` to `ex`
