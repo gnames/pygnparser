@@ -159,19 +159,7 @@ result.infraspecies()  # => String
 'cus'
 ```
 
-4) At present, GNParser normalizes authorships like `Smith in Jones, 1999` to `Smith ex Jones 1999`. In the Python wrapper, it is possible to override that behavior by setting the `preserve_in_authorship` parameter to `True` when calling the `authorship()`, `authorship_normalized()`, `combination_authorship()`, `original_authorship()`, or `normalized()` functions.
-```python
->>> result = gnparser('Aus bus Smith in Jones, 1999')
-result.normalized()  # => String
-'Aus bus Smith ex Jones 1999'
-result.normalized(preserve_in_authorship=True)  # => String
-'Aus bus Smith in Jones 1999'
-```
-* If the verbatim authorship contains `ex`, setting preserve_in_authorship to `True` will not change `ex` to `in`:
-```python
->>> result = gnparser('Aus bus Smith ex Jones, 1999')
-result.normalized(preserve_in_authorship=True)  # => String
-'Aus bus Smith ex Jones 1999'
+4) If you wish to abbreviate author strings with over a certain threshold of authors as *et al.* beyond a certain cutoff you can use the parameter `et_al_cutoff=3` on the authorship methods, which would re-format `Smith, Jones & Anderson, 1999` into `Smith et al., 1999`. By default *et al.* formatting is disabled.
 ```
 
 ---
