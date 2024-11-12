@@ -160,6 +160,14 @@ result.infraspecies()  # => String
 ```
 
 4) If you wish to abbreviate author strings with over a certain threshold of authors as *et al.* beyond a certain cutoff you can use the parameter `et_al_cutoff=3` on the authorship methods, which would re-format `Smith, Jones & Anderson, 1999` into `Smith et al., 1999`. By default *et al.* formatting is disabled.
+```python
+>>> result = gnparser('Aus bus cus (Smith, Anderson, Jones, O\'Brian & Peters in Richards, Shultz, Anderson & Smith, 1999) Ryan in Anderson, Smith, & Jones, 2000')
+>>> result.authorship(et_al_cutoff=3) # => String
+'(Smith et al. in Richards et al., 1999) Ryan in Anderson et al., 2000'
+>>> res.original_authorship(et_al_cutoff=3) # => String
+'Smith et al. in Richards et al., 1999'
+>>> res.combination_authorship(et_al_cutoff=3) # => String
+'Ryan in Anderson et al., 2000'
 ```
 
 ---
